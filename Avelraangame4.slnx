@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Avelraangame4/Avelraangame4.csproj" />
+  <Project Path="Models/Models.csproj" Id="08af2fb0-ce96-4bdf-8a81-8ab00f87b58a" />
+  <Project Path="Services/Services.csproj" Id="48f40a00-db8f-4d46-b01a-cf8a4757beee" />
+  <Project Path="Statics/Statics.csproj" Id="b740328e-2b72-4e9d-b8e8-7a4159757084" />
+</Solution>
