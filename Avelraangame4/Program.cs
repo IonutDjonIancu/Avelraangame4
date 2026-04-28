@@ -18,7 +18,7 @@ using (var scope = app.Services.CreateScope())
     var gameState = scope.ServiceProvider.GetRequiredService<IGameStateService>();
     var env = app.Environment;
     var key = env.IsDevelopment() ? Helpers.SnapshotTest : Helpers.SnapshotProd;
-    await gameState.Load(key);
+    await gameState.LoadSnapshotIntoMemory(key);
 }
 
 // Configure the HTTP request pipeline.
