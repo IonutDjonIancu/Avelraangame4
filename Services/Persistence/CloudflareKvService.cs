@@ -26,13 +26,11 @@ public class CloudflareKvService : ICloudflareKvService
     {
         _accountId = configuration["Cloudflare:AccountId"] ?? throw new InvalidOperationException("Cloudflare:AccountId missing.");
         _namespaceId = configuration["Cloudflare:NamespaceId"] ?? throw new InvalidOperationException("Cloudflare:NamespaceId missing.");
-        var email = configuration["Cloudflare:Email"] ?? throw new InvalidOperationException("Cloudflare:Email missing.");
-        var apiKey = configuration["Cloudflare:GlobalApiKey"] ?? throw new InvalidOperationException("Cloudflare:GlobalApiKey missing.");
+        var apiToken = configuration["Cloudflare:ApiToken"] ?? throw new InvalidOperationException("Cloudflare:ApiToken missing.");
 
         _baseUrl = $"https://api.cloudflare.com/client/v4/accounts/{_accountId}/storage/kv/namespaces/{_namespaceId}/values";
 
-        httpClient.DefaultRequestHeaders.Add("X-Auth-Email", email);
-        httpClient.DefaultRequestHeaders.Add("X-Auth-Key", apiKey);
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiToken}");
         _httpClient = httpClient;
     }
 
