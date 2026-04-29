@@ -7,7 +7,8 @@ namespace Services.Persistence;
 public interface IGameStateService
 {
     Task LoadSnapshotIntoMemory();
-    Task<bool> SaveSnapshot(EntityName entityName, object entity);
+    Task<bool> SaveToSnapshot(EntityName entityName, object entity);
+    IReadOnlyList<Player> GetPlayers();
 }
 
 public class GameStateService : IGameStateService
@@ -23,6 +24,8 @@ public class GameStateService : IGameStateService
         _kv = kv;
         _env = env;
     }
+
+    public IReadOnlyList<Player> GetPlayers() => _snapshot.Players.AsReadOnly();
 
     public async Task LoadSnapshotIntoMemory()
     {
@@ -42,7 +45,7 @@ public class GameStateService : IGameStateService
         }
     }
 
-    public async Task<bool> SaveSnapshot(EntityName entityName, object entity)
+    public async Task<bool> SaveToSnapshot(EntityName entityName, object entity)
     {
         try
         {

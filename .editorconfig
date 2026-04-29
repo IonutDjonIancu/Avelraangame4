@@ -1,0 +1,5 @@
+root = true
+
+[*.cs]
+dotnet_style_prefer_primary_constructors = false
+dotnet_diagnostic.IDE0290.severity = none

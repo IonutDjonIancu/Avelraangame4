@@ -1,12 +1,32 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+@using Microsoft.AspNetCore.Components.Authorization
+@using Services.Auth
 
 <div class="page">
     <nav class="top-navbar">
-        <div class="navbar-brand">Avelraangame4</div>
         <div class="navbar-links">
             <NavLink href="" Match="NavLinkMatch.All">Home</NavLink>
-            <NavLink href="counter">Counter</NavLink>
-            <NavLink href="weather">Weather</NavLink>
+            @if (_isAuthenticated)
+            {
+                <NavLink href="characters">Characters</NavLink>
+            }
+        </div>
+        <div class="navbar-right">
+            @if (_isAuthenticated)
+            {
+                <span class="navbar-player">@TruncateName(_playerName!)</span>
+                <form method="post" action="/account/logout">
+                    <AntiforgeryToken />
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            }
+            else
+            {
+                <NavLink href="/register">Register</NavLink>
+                <NavLink href="/login">Login</NavLink>
+            }
         </div>
     </nav>
 
@@ -15,8 +35,17 @@
     </main>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+@code {
+    private bool _isAuthenticated;
+    private string? _playerName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authState.User.Identity?.IsAuthenticated == true;
+        _playerName = authState.User.Identity?.Name;
+    }
+
+    private static string TruncateName(string name) =>
+        name.Length > 5 ? $"{name[..5]}..." : name;
+}

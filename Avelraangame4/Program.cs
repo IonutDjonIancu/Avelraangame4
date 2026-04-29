@@ -1,6 +1,7 @@
 using Avelraangame4.Components;
+using Services.Auth;
 using Services.Persistence;
-using Statics;
+using Services.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,18 +9,37 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<ICloudflareKvService, CloudflareKvService>();
 builder.Services.AddSingleton<IGameStateService, GameStateService>();
 
+builder.Services.AddScoped<IValidationsService, ValidationsService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication("AvelraanCookie")
+    .AddCookie("AvelraanCookie", options =>
+    {
+        options.Cookie.Name = "AvelraanSession";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/not-found";
+        options.SlidingExpiration = true;
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddSession();
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var gameState = scope.ServiceProvider.GetRequiredService<IGameStateService>();
-    var env = app.Environment;
-    var key = env.IsDevelopment() ? Helpers.SnapshotTest : Helpers.SnapshotProd;
-    await gameState.LoadSnapshotIntoMemory(key);
-}
+// load Gamestate into memory
+var gameState = app.Services.GetRequiredService<IGameStateService>();
+await gameState.LoadSnapshotIntoMemory();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -29,11 +49,14 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSession();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+app.MapControllers();
 
 app.Run();
