@@ -52,7 +52,7 @@ public class ValidationsService : IValidationsService
             var (player, _) = ValidateDoesPlayerExist(name);
             if (player is not null)
                 return (false, $"{Errors.PlayerAlreadyExists}{name}");
-            
+
             return (true, null);
         }
         catch (Exception ex)
@@ -105,7 +105,7 @@ public class ValidationsService : IValidationsService
         var results = new List<ValidationResult>();
         var context = new ValidationContext(model);
         Validator.TryValidateObject(model, context, results, validateAllProperties: true);
-        return results.Select(r => r.ErrorMessage ?? string.Empty).ToList();
+        return results.ConvertAll(r => r.ErrorMessage ?? string.Empty);
     }
     #endregion
 }
