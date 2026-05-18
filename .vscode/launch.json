@@ -9,20 +9,15 @@
             "program": "${workspaceFolder}/Avelraangame4/bin/Debug/net10.0/Avelraangame4.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Avelraangame4",
-            "stopAtEntry": false,
             "console": "integratedTerminal",
             "serverReadyAction": {
                 "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "uriFormat": "https://localhost:7280"
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "https://localhost:7280;http://localhost:5113"
             },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}"
-            }
         }
     ]
 }

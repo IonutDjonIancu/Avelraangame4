@@ -1,7 +1,7 @@
-using Avelraangame4.Components;
 using Services.Auth;
 using Services.Persistence;
 using Services.Validation;
+using Avelraangame4.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
